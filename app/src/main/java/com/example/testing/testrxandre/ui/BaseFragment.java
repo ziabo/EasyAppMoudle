@@ -5,5 +5,5 @@ package com.example.testing.testrxandre.ui;
  */
 
 public class BaseFragment{
-    
+
 }
