@@ -1,7 +1,5 @@
 package com.example.testing.testrxandre.net;
 
-import android.util.Log;
-
 import com.example.testing.testrxandre.utils.NetUtils;
 import com.example.testing.testrxandre.utils.T;
 
@@ -22,35 +20,37 @@ import retrofit2.adapter.rxjava2.HttpException;
 
 public abstract class HttpObserver<R> implements Observer<R> {
 
-    private Disposable mDisposable;
 
     /**
-     * 建立链接的时候调用并生成Disposable对象
+     * 建立链接的时候调用并生成Disposable对象,此处相当于1.x的onStart()方法我做了如下处理
+     * 有更好建议的可以私聊我,或者评论
      * @param d 链接状态对象
      */
     @Override
     public void onSubscribe(Disposable d) {
-        mDisposable = d;
-        getDisposable(d);
+        if (!NetUtils.isConnected()) {
+            if (d!=null && !d.isDisposed()){
+                d.dispose();
+            }
+            T.showShort("请检查网络连接后重试!");
+            onFinished();
+        }else{
+            getDisposable(d);
+        }
     }
 
 
     /**
-     * 请求结果回调回来的时候调用,会调用多次
+     * 此处和1.x的onNext()基本没有什么变化,所以我选择注释,让实现类自己处理
+     * 之前我是写了的,看过这篇博客的应该有印象
      * @param r 返回的结果,没网络时提示
      */
-    @Override
-    public void onNext(R r) {
-        if (!NetUtils.isConnected()) {
-            if (mDisposable!=null && !mDisposable.isDisposed()){
-                mDisposable.dispose();
-            }
-            T.showShort("请检查网络连接后重试!");
-        }
-        onSuccess(r);
-    }
-
-    public abstract void onSuccess(R r);
+//    @Override
+//    public void onNext(R r) {
+//        onSuccess(r);
+//    }
+//
+//    public abstract void onSuccess(R r);
 
     /**
      * 出现异常的时候会走这里,我们统一放在 onFinished();处理

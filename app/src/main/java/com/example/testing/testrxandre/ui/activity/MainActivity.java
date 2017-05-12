@@ -1,4 +1,4 @@
-package com.example.testing.testrxandre.ui;
+package com.example.testing.testrxandre.ui.activity;
 
 
 
@@ -8,6 +8,7 @@ import com.example.testing.testrxandre.R;
 import com.example.testing.testrxandre.api.ApiService;
 import com.example.testing.testrxandre.bean.DataBean;
 import com.example.testing.testrxandre.net.HttpObserver;
+import com.example.testing.testrxandre.ui.BaseActivity;
 import com.example.testing.testrxandre.utils.T;
 
 
@@ -40,9 +41,10 @@ public class MainActivity extends BaseActivity {
         Map<String,Object> map = new HashMap<>();
         map.put("currentPage",1);
         map.put("pageSize",20);
+        //此处的new HttpObserver用了转型,必须要这么写,要不然里面是四个方法
         ApiService.getApiService().get_health(new HttpObserver<DataBean>() {
             @Override
-            public void onSuccess(DataBean dataBean) {
+            public void onNext(DataBean dataBean) {
                 T.showShort(dataBean.toString());
                 Log.d("MainActivity", dataBean.toString());
             }
@@ -58,6 +60,5 @@ public class MainActivity extends BaseActivity {
             }
         },map);
     }
-
 
 }
